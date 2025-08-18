@@ -21,7 +21,7 @@ src/
 │   │   └── login/         # Multi-step login (username → secure word → password)
 │   ├── mfa/               # Separate MFA page (post-authentication)
 │   ├── dashboard/         # Protected transaction dashboard
-│   ├── middleware.ts      # Banking-grade route protection
+│   ├── middleware.ts      # Route protection
 │   ├── layout.tsx         # Root layout with navbar
 │   └── page.tsx           # Landing page
 ├── components/            # Shared UI components
@@ -106,7 +106,7 @@ pnpm format:fix   # Format and fix code
 pnpm type-check   # Run TypeScript checks
 ```
 
-## 🔐 Banking-Grade Authentication Flow
+## 🔐Secure Authentication Flow
 
 ### Two-Tier Security Process
 
@@ -118,7 +118,7 @@ pnpm type-check   # Run TypeScript checks
 
 **Phase 2: Multi-Factor Authentication (Separate Page)**
 5. **MFA Verification** - 6-digit TOTP with 3-attempt limit
-6. **Full Session** - Complete banking access granted
+6. **Full Session** - Complete secure access granted
 
 ### Security Architecture
 - **Single-page login** - No browser navigation between auth steps

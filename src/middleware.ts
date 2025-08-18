@@ -1,96 +1,57 @@
-import { getToken } from "next-auth/jwt"
-import { type NextRequest, NextResponse } from "next/server"
+import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server"
 
-// Define route patterns for different protection levels
-const PUBLIC_ROUTES = ["/", "/api/auth"]
-const AUTH_ROUTES = ["/login"]
-const MFA_REQUIRED_ROUTES = ["/mfa"]
-const FULLY_PROTECTED_ROUTES = ["/dashboard"]
+export default withAuth(
+  function middleware(req) {
+    const { pathname } = req.nextUrl
+    const token = req.nextauth.token
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+    // MFA page: requires authenticated=true
+    if (pathname.startsWith("/mfa")) {
+      if (!token?.authenticated) {
+        return NextResponse.redirect(new URL("/login", req.url))
+      }
+      // If already MFA verified, redirect to dashboard
+      if (token?.mfaVerified) {
+        return NextResponse.redirect(new URL("/dashboard", req.url))
+      }
+    }
 
-  // TODO: Get actual session token
-  // const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+    // Dashboard: requires authenticated=true AND mfaVerified=true
+    if (pathname.startsWith("/dashboard")) {
+      if (!token?.authenticated) {
+        return NextResponse.redirect(new URL("/login", req.url))
+      }
+      if (!token?.mfaVerified) {
+        return NextResponse.redirect(new URL("/mfa", req.url))
+      }
+    }
 
-  // Mock session states for demonstration
-  const mockSession = {
-    authenticated: false, // Set to true after login
-    mfaVerified: false, // Set to true after MFA
-  }
-
-  // Allow public routes
-  if (isPublicRoute(pathname)) {
     return NextResponse.next()
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        const { pathname } = req.nextUrl
+
+        // Always allow access to public routes and auth API
+        if (pathname === "/" || pathname.startsWith("/login") || pathname.startsWith("/api")) {
+          return true
+        }
+
+        // For protected routes, require a valid token
+        return !!token
+      },
+    },
   }
+)
 
-  // Redirect authenticated users away from auth routes
-  if (isAuthRoute(pathname) && mockSession.authenticated) {
-    return NextResponse.redirect(
-      new URL(mockSession.mfaVerified ? "/dashboard" : "/mfa", request.url)
-    )
-  }
-
-  // Protect MFA routes - require authentication but not MFA
-  if (isMFARoute(pathname)) {
-    if (!mockSession.authenticated) {
-      return NextResponse.redirect(new URL("/login", request.url))
-    }
-    if (mockSession.mfaVerified) {
-      return NextResponse.redirect(new URL("/dashboard", request.url))
-    }
-    return NextResponse.next()
-  }
-
-  // Protect fully secured routes - require both authentication and MFA
-  if (isFullyProtectedRoute(pathname)) {
-    if (!mockSession.authenticated) {
-      return NextResponse.redirect(new URL("/login", request.url))
-    }
-    if (!mockSession.mfaVerified) {
-      return NextResponse.redirect(new URL("/mfa", request.url))
-    }
-    return NextResponse.next()
-  }
-
-  // Default: allow request
-  return NextResponse.next()
-}
-
-// Route pattern helpers
-function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route))
-}
-
-function isAuthRoute(pathname: string): boolean {
-  return AUTH_ROUTES.some((route) => pathname.startsWith(route))
-}
-
-function isMFARoute(pathname: string): boolean {
-  return MFA_REQUIRED_ROUTES.some((route) => pathname.startsWith(route))
-}
-
-function isFullyProtectedRoute(pathname: string): boolean {
-  return FULLY_PROTECTED_ROUTES.some((route) => pathname.startsWith(route))
-}
-
-// Configure middleware to run on specific paths
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - api routes that don't require auth
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public assets
-     */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
-  ],
+  matcher: ["/mfa/:path*", "/dashboard/:path*"],
 }
 
 /*
-Banking-Grade Security Levels:
+Secure Security Levels:
 
 1. PUBLIC: No authentication required
    - Landing page (/)
