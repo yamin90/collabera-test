@@ -38,46 +38,48 @@ Build a modern Next.js 14 application implementing three key challenges using fe
    - Mobile-first responsive design
 
 ### Phase 3: Challenge 2 - Authentication Flow (Priority 3)
-4. **Username Input Step (Server Action)**
-   - Form with username input using React Hook Form
-   - Server Action to generate secure word
-   - Form validation with Zod
+4. **Login Page - Multi-Step Authentication (Single Page)**
+   - Username input with validation
+   - Server Action to generate secure word (HMAC-based)
+   - Secure word display with 60-second timer
+   - Password input (client-side hashing with Web Crypto API)
+   - Server Action to validate complete login
+   - React state management for step progression
+   - No browser navigation between auth steps
 
-5. **Secure Word Generation (Server Side)**
+5. **Secure Word Generation & Validation (Server Side)**
    - Server Action: generateSecureWord()
    - HMAC-based secure word with crypto.createHmac()
    - In-memory Map storage: userId → {secureWord, timestamp, attempts}
    - 60-second expiry validation
    - 10-second rate limiting per user
+   - Integrated with login validation
 
-6. **Secure Word Display (Client Component)**
-   - Display secure word with React state
-   - Real-time countdown with useEffect timer
-   - Navigation to password step
-
-7. **Password Input Step (Server Action)**
-   - Masked password input
-   - Client-side hashing with Web Crypto API
-   - Server Action to validate login
-
-8. **Login Validation (Server Action)**
+6. **Login Validation (Server Action)**
    - Server Action: validateLogin()
    - Validate secure word hasn't expired
-   - Mock password validation
-   - Create NextAuth session
-   - Redirect to MFA step
+   - Mock password validation against stored hash
+   - Create NextAuth session with partial authentication
+   - Session state: {authenticated: true, mfaVerified: false}
+   - Redirect to MFA page
 
-9. **MFA Implementation (Server Action)**
-   - 6-digit code input form
+7. **MFA Implementation (Separate Protected Page)**
+   - Separate /mfa route protected by middleware
+   - Requires authenticated session (but not MFA verified)
+   - 6-digit code input form with React Hook Form
    - Mock TOTP generation with crypto.randomInt()
    - Server Action: verifyMFA()
    - 3 attempt limit with Map storage
-   - Session completion
+   - Update session to: {authenticated: true, mfaVerified: true}
+   - Redirect to dashboard
 
-10. **Session Management (NextAuth)**
-    - NextAuth session creation
-    - Protected route middleware
-    - Automatic redirect to dashboard
+8. **Banking-Grade Session Management (NextAuth + Middleware)**
+   - NextAuth session with custom session strategy
+   - Two-tier authentication: authenticated + mfaVerified
+   - Protected route middleware for different access levels
+   - MFA page: requires authenticated=true
+   - Dashboard: requires authenticated=true AND mfaVerified=true
+   - Automatic redirects based on session state
 
 ### Phase 4: Challenge 3 - Dashboard (Priority 4)
 11. **Transaction History Dashboard (Server Component)**
@@ -103,28 +105,27 @@ Build a modern Next.js 14 application implementing three key challenges using fe
 src/
 ├── app/                      # Next.js 14 App Router
 │   ├── (auth)/              # Route group for authentication
-│   │   ├── login/           # Username input step
-│   │   ├── secure-word/     # Display secure word with timer
-│   │   ├── password/        # Password input step
-│   │   └── mfa/             # Multi-factor authentication
+│   │   └── login/           # Multi-step login (username → secure word → password)
+│   ├── mfa/                 # Separate MFA page (post-login)
 │   ├── dashboard/           # Protected transaction dashboard
 │   ├── layout.tsx           # Root layout with navbar
 │   ├── page.tsx             # Landing page
 │   ├── api/
 │   │   └── auth/
 │   │       └── [...nextauth]/route.ts  # NextAuth config
+│   ├── middleware.ts        # Banking-grade route protection
 │   └── globals.css          # TailwindCSS styles
 ├── features/                # Domain-driven feature modules
 │   ├── auth/
 │   │   ├── components/      # Auth-specific components
-│   │   │   ├── username-form.tsx
-│   │   │   ├── secure-word-display.tsx
-│   │   │   ├── password-form.tsx
-│   │   │   └── mfa-form.tsx
+│   │   │   ├── username-step.tsx
+│   │   │   ├── secure-word-step.tsx
+│   │   │   ├── password-step.tsx
+│   │   │   ├── login-form.tsx      # Main multi-step form container
+│   │   │   └── mfa-form.tsx        # Separate MFA form
 │   │   ├── actions/         # Server Actions for auth
-│   │   │   ├── generate-secure-word.ts
-│   │   │   ├── validate-login.ts
-│   │   │   └── verify-mfa.ts
+│   │   │   ├── validate-login.ts   # Combined login validation
+│   │   │   └── verify-mfa.ts       # MFA verification
 │   │   ├── types/           # Auth type definitions
 │   │   └── utils/           # Auth utilities (crypto, validation)
 │   ├── dashboard/
@@ -149,15 +150,15 @@ src/
         └── table.tsx
 ```
 
-## Server Actions (Feature-Based Organization)
+## Server Actions (Banking-Secure Organization)
 ```typescript
-// features/auth/actions/generate-secure-word.ts
-export async function generateSecureWord(username: string)
-
 // features/auth/actions/validate-login.ts  
+// Combined secure word generation and login validation
+export async function generateSecureWord(username: string)
 export async function validateLogin(username: string, hashedPassword: string, secureWord: string)
 
 // features/auth/actions/verify-mfa.ts
+// Post-authentication MFA verification
 export async function verifyMFA(username: string, code: string)
 
 // features/dashboard/actions/get-transactions.ts

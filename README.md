@@ -18,11 +18,10 @@ This application demonstrates three key challenges:
 src/
 ├── app/                    # Next.js 14 App Router
 │   ├── (auth)/            # Route group for authentication
-│   │   ├── login/         # Username input step
-│   │   ├── secure-word/   # Display secure word with timer
-│   │   ├── password/      # Password input step
-│   │   └── mfa/           # Multi-factor authentication
+│   │   └── login/         # Multi-step login (username → secure word → password)
+│   ├── mfa/               # Separate MFA page (post-authentication)
 │   ├── dashboard/         # Protected transaction dashboard
+│   ├── middleware.ts      # Banking-grade route protection
 │   ├── layout.tsx         # Root layout with navbar
 │   └── page.tsx           # Landing page
 ├── components/            # Shared UI components
@@ -107,28 +106,25 @@ pnpm format:fix   # Format and fix code
 pnpm type-check   # Run TypeScript checks
 ```
 
-## 🔐 Authentication Flow
+## 🔐 Banking-Grade Authentication Flow
 
-### Multi-Step Security Process
+### Two-Tier Security Process
 
-1. **Username Input**
-   - Form validation with Zod schema
-   - Server Action generates secure word using HMAC
+**Phase 1: Multi-Step Login (Single Page)**
+1. **Username Input** - Form validation with Zod schema
+2. **Secure Word Display** - HMAC-generated word with 60-second timer
+3. **Password Input** - Client-side hashing, server validation
+4. **Session Creation** - Partial authentication state
 
-2. **Secure Word Display**
-   - 60-second expiration timer
-   - Rate limiting (10-second cooldown)
-   - Real-time countdown with React state
+**Phase 2: Multi-Factor Authentication (Separate Page)**
+5. **MFA Verification** - 6-digit TOTP with 3-attempt limit
+6. **Full Session** - Complete banking access granted
 
-3. **Password Input**
-   - Client-side hashing with Web Crypto API
-   - Masked input for security
-   - Server-side validation
-
-4. **Multi-Factor Authentication**
-   - 6-digit TOTP simulation
-   - 3-attempt limit
-   - Session creation with NextAuth
+### Security Architecture
+- **Single-page login** - No browser navigation between auth steps
+- **Protected MFA route** - Requires partial authentication
+- **Two-tier sessions** - `authenticated` + `mfaVerified` states
+- **Middleware protection** - Route-level access control
 
 ### Security Features
 
