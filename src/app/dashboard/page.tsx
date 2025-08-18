@@ -1,10 +1,17 @@
+import { UserStatus } from "@/components/user-status"
+
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Transaction History Dashboard</h1>
           <p className="mt-2 text-gray-600">View and manage your transaction history</p>
+        </div>
+
+        {/* User Authentication Status */}
+        <div className="mb-8">
+          <UserStatus />
         </div>
 
         <div className="bg-white shadow rounded-lg">

@@ -6,6 +6,20 @@ export default withAuth(
     const { pathname } = req.nextUrl
     const token = req.nextauth.token
 
+    // Login page: redirect authenticated users
+    if (pathname.startsWith("/login")) {
+      if (token?.authenticated && token?.mfaVerified) {
+        // Fully authenticated - go to dashboard
+        return NextResponse.redirect(new URL("/dashboard", req.url))
+      }
+      if (token?.authenticated && !token?.mfaVerified) {
+        // Authenticated but no MFA - go to MFA page
+        return NextResponse.redirect(new URL("/mfa", req.url))
+      }
+      // Not authenticated - allow access to login
+      return NextResponse.next()
+    }
+
     // MFA page: requires authenticated=true
     if (pathname.startsWith("/mfa")) {
       if (!token?.authenticated) {
@@ -47,25 +61,11 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ["/mfa/:path*", "/dashboard/:path*"],
+  matcher: ["/login/:path*", "/mfa/:path*", "/dashboard/:path*"],
 }
 
 /*
 Secure Security Levels:
-
-1. PUBLIC: No authentication required
-   - Landing page (/)
-   - Auth API endpoints (/api/auth)
-
-2. AUTH_ONLY: Redirect if already authenticated  
-   - Login page (/login)
-
-3. MFA_PENDING: Requires authentication, but not MFA
-   - MFA verification page (/mfa)
-
-4. FULLY_SECURED: Requires both authentication AND MFA
-   - Dashboard (/dashboard)
-   - All other protected routes
 
 Flow:
 - Unauthenticated → /login
