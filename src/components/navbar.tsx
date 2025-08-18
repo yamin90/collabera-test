@@ -94,25 +94,20 @@ export default function Navbar() {
             </div>
           </div>
 
-
           {/* Mobile search and menu buttons */}
           <div className="md:hidden flex items-center space-x-1">
             <Button variant="ghost" size="icon" onClick={toggleSearch} aria-label="Search">
               <Search />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleMenu}
               aria-expanded={isOpen}
               aria-label="Toggle main menu"
             >
               <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <X aria-hidden="true" />
-              ) : (
-                <Menu aria-hidden="true" />
-              )}
+              {isOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
             </Button>
           </div>
         </div>
@@ -172,32 +167,35 @@ export default function Navbar() {
         {isSearchOpen && (
           <div className="md:hidden fixed inset-0 z-50 bg-white max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="">
-            <div className="flex items-center justify-between h-14 md:h-16">
-              <div className="flex-1 mr-2">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-gray-400" />
+              <div className="flex items-center justify-between h-14 md:h-16">
+                <div className="flex-1 mr-2">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Search documentation..."
+                      className="pl-9 w-full h-9"
+                      autoFocus
+                      aria-label="Search documentation"
+                    />
                   </div>
-                  <Input
-                    type="text"
-                    placeholder="Search documentation..."
-                    className="pl-9 w-full h-9"
-                    autoFocus
-                    aria-label="Search documentation"
-                  />
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleSearch}
+                  aria-label="Close search"
+                >
+                  <X />
+                </Button>
               </div>
-              <Button variant="ghost" size="icon" onClick={toggleSearch} aria-label="Close search">
-                <X />
-              </Button>
             </div>
-            </div>
-            
+
             {/* Search Results/Suggestions Area */}
             <div className="py-4 border-t border-gray-200">
-              <div className="text-sm text-gray-500 mb-4 px-3 py-">
-                Popular searches
-              </div>
+              <div className="text-sm text-gray-500 mb-4 px-3 py-">Popular searches</div>
               <div className="space-y-2">
                 <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                   <Search className="h-4 w-4 text-gray-400" />
