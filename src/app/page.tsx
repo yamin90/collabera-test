@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default function HomePage() {
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 py-16 lg:py-20">
       {/* Hero Section */}
       <div className="text-center max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -17,7 +17,7 @@ export default function HomePage() {
           transaction monitoring.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 lg:mb-20">
           <Button asChild size="lg" className="px-8 py-6">
             <Link href="/login">Get Started</Link>
           </Button>
