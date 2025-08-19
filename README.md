@@ -95,6 +95,10 @@ pnpm type-check   # Run TypeScript checks
 
 ## 🚀 Deployment
 
+### Live Demo
+
+🌐 **[View Live Application](https://collabera-test-3cusd0nkj-yamin90s-projects.vercel.app/)**
+
 ### Production Build
 
 ```bash
