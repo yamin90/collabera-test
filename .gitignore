@@ -58,3 +58,4 @@ storybook-static/
 
 # Claude
 .claude/
+.vercel

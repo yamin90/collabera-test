@@ -1,9 +1,9 @@
+import { ProtectedLayoutClient } from "@/components/protected-layout-client"
 import { ProtectedNavbar } from "@/components/protected-navbar"
 import { authOptions } from "@/lib/auth-config"
 import type { Session } from "next-auth"
 import { getServerSession } from "next-auth/next"
 import { redirect } from "next/navigation"
-import { ProtectedLayoutClient } from "@/components/protected-layout-client"
 
 export default async function ProtectedLayout({
   children,
