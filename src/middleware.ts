@@ -30,17 +30,6 @@ export default withAuth(
         return NextResponse.redirect(new URL("/dashboard", req.url))
       }
     }
-
-    // Dashboard: requires authenticated=true AND mfaVerified=true
-    if (pathname.startsWith("/dashboard")) {
-      if (!token?.authenticated) {
-        return NextResponse.redirect(new URL("/login", req.url))
-      }
-      if (!token?.mfaVerified) {
-        return NextResponse.redirect(new URL("/mfa", req.url))
-      }
-    }
-
     return NextResponse.next()
   },
   {
@@ -61,7 +50,7 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ["/login/:path*", "/mfa/:path*", "/dashboard/:path*"],
+  matcher: ["/login/:path*", "/mfa/:path*"],
 }
 
 /*

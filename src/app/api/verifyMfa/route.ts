@@ -65,8 +65,6 @@ export async function POST(request: NextRequest) {
           username: normalizedUsername,
           mfaVerified: true,
           nextStep: "/dashboard",
-          // Signal to frontend to create NextAuth session
-          createSession: true,
         },
       })
     }

@@ -35,7 +35,7 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link
               href="/"
-              className="text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+              className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
             >
               AEON
             </Link>

@@ -9,10 +9,10 @@ export default function HomePage() {
       <div className="text-center max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
           Aeon Credit
-          <span className="block text-blue-600">Management System</span>
+          <span className="block text-primary">Management System</span>
         </h1>
 
-        <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p className="text-gray-600 mb-8 max-w-2xl mx-auto text-base">
           Secure, modern credit management with advanced authentication flow and comprehensive
           transaction monitoring.
         </p>
@@ -30,8 +30,8 @@ export default function HomePage() {
       {/* Features Grid */}
       <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         <div className="text-center p-8 bg-white rounded-lg shadow-sm border">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <Shield className="w-8 h-8 text-blue-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+            <Shield className="w-8 h-8 text-primary" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-3">Advanced Security</h3>
           <p className="text-gray-600">

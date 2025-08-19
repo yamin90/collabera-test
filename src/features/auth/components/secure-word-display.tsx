@@ -39,10 +39,10 @@ export function SecureWordDisplay({ secureWord, expiresAt, onExpired }: SecureWo
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-        <p className="text-sm text-blue-800 mb-2">Your secure word:</p>
-        <div className="text-2xl font-bold text-blue-900 tracking-wider mb-2">{secureWord}</div>
-        <div className={`text-sm ${timeLeft <= 10 ? "text-red-600" : "text-blue-600"}`}>
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
+        <p className="text-sm text-primary/80 mb-2">Your secure word:</p>
+        <div className="text-2xl font-bold text-primary tracking-wider mb-2">{secureWord}</div>
+        <div className={`text-sm ${timeLeft <= 10 ? "text-red-600" : "text-primary/70"}`}>
           {timeLeft > 0 ? (
             <>Expires in: {formatTime(timeLeft)}</>
           ) : (

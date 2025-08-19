@@ -2,15 +2,20 @@
 
 import { Button } from "@/components/ui/button"
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { LogOut, Menu, User, X } from "lucide-react"
+import { ChevronDown, LogOut, Menu, Settings, User, X } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -20,6 +25,8 @@ export function ProtectedNavbar() {
   const { data: session } = useSession()
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
+
+  console.log(session)
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -41,7 +48,7 @@ export function ProtectedNavbar() {
           <div className="flex-shrink-0">
             <Link
               href="/dashboard"
-              className="text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+              className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
             >
               AEON
             </Link>
@@ -76,22 +83,46 @@ export function ProtectedNavbar() {
           </div>
 
           {/* Desktop User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
-              </div>
-              <div className="text-sm">
-                <p className="font-medium text-gray-900">{session?.user?.name || "User"}</p>
-                <p className="text-xs text-gray-500">
-                  {session?.user?.email || "user@example.com"}
-                </p>
-              </div>
-            </div>
-            <Button onClick={handleLogout} variant="outline" size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+          <div className="hidden md:flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center space-x-2 p-2">
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-sm text-left">
+                    <p className="font-medium text-gray-900">{session?.user?.name || "User"}</p>
+                    <p className="text-xs text-gray-500">
+                      {session?.user?.email || "user@example.com"}
+                    </p>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center">
+                    <User className="w-4 h-4 mr-2" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="flex items-center">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Mobile user and menu buttons */}

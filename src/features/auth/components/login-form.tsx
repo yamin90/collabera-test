@@ -127,19 +127,19 @@ export function LoginForm() {
       {/* Progress indicator */}
       <div className="mb-6">
         <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-          <span className={currentStep === "username" ? "text-blue-600 font-medium" : ""}>
+          <span className={currentStep === "username" ? "text-primary font-medium" : ""}>
             1. Username
           </span>
-          <span className={currentStep === "secure-word" ? "text-blue-600 font-medium" : ""}>
+          <span className={currentStep === "secure-word" ? "text-primary font-medium" : ""}>
             2. Secure Word
           </span>
-          <span className={currentStep === "password" ? "text-blue-600 font-medium" : ""}>
+          <span className={currentStep === "password" ? "text-primary font-medium" : ""}>
             3. Password
           </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-1">
           <div
-            className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+            className="bg-primary h-1 rounded-full transition-all duration-300"
             style={{
               width:
                 currentStep === "username" ? "33%" : currentStep === "secure-word" ? "66%" : "100%",
